@@ -1,0 +1,45 @@
+# Secrets & environment
+.env
+.env/
+.env.*
+*.env
+secrets/
+config/secrets.*
+
+# Sensitive token/key files
+*token*.txt
+*webhook*.txt
+*secret*.txt
+*api_key*.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
