@@ -75,12 +75,27 @@ async def ping(interaction: discord.Interaction):
         return
     
     embed = discord.Embed(
-        title=" بونج!",
+        title=" بونج",
         description=f"تأخير البوت: **{round(bot.latency * 1000)}ms**",
         color=0x2ECC71
     )
     embed.set_footer(text="نايت فويد | Night Void")
     await interaction.response.send_message(embed=embed)
 #member commands
+@bot.tree.command(name="serverinfo", description="يعطيك معلومات عن السيرفر")
+async def serverinfo(interaction: discord.Interaction):
+    human_count = len([m for m in interaction.guild.members if not m.bot])
+    embed = discord.Embed(
+        title=f"معلومات عن {interaction.guild.name}",
+        description=(
+            f"عدد الأعضاء: **{human_count}**\n"
+            f"عدد الرولات: **{len(interaction.guild.roles)}**\n"
+            f"صاحب السيرفر: **{interaction.guild.owner}**"
+        ),
+        color=0xE67E22
+    )
+    embed.set_thumbnail(url=interaction.guild.icon.url)
+    embed.set_footer(text="نايت فويد | Night Void")
+    await interaction.response.send_message(embed=embed)
 
 bot.run(token)
