@@ -67,7 +67,8 @@ async def prefix(ctx):
     embed.add_field(name="معلومات من البوت", value="!nightvoid", inline=True)
     embed.set_footer(text="نايت فويد | Night Void")
     await ctx.send(embed=embed)
-#Admin commands
+
+#Admin slash
 @bot.tree.command(name="ping", description="تحقق من تأخير البوت (ادمن فقط)")
 async def ping(interaction: discord.Interaction):
     if not interaction.user.guild_permissions.administrator:
@@ -79,9 +80,46 @@ async def ping(interaction: discord.Interaction):
         description=f"تأخير البوت: **{round(bot.latency * 1000)}ms**",
         color=0x2ECC71
     )
+
+@bot.tree.command(name="showmemberinfo", description="يعطيك معلومات عن العضو (ادمن فقط)")
+async def show_member_info(interaction: discord.Interaction, member: discord.Member):
+    if not interaction.user.guild_permissions.administrator:
+        await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
+        return
+
+    embed = discord.Embed(
+        title=f"معلومات عن {member}",
+        description=(
+            f"الاسم الكامل: **{member}**\n"
+            f"الرتب: **{', '.join([role.name for role in member.roles if role.name != '@everyone'])}**\n"
+            f"تاريخ الانضمام: **{member.joined_at.strftime('%Y-%m-%d')}**\n"
+            f"الحالة: **{member.status}**"
+        ),
+        color=0xE74C3C
+    )
+    embed.set_thumbnail(url=member.avatar.url)
     embed.set_footer(text="نايت فويد | Night Void")
     await interaction.response.send_message(embed=embed)
-#member commands
+
+@bot.tree.command(name="showroleinfo", description="يعطيك معلومات عن الرتبة (ادمن فقط)")
+async def show_role_info(interaction: discord.Interaction, role: discord.Role):
+    if not interaction.user.guild_permissions.administrator:
+        await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
+        return
+
+    embed = discord.Embed(
+        title=f"معلومات عن الرتبة {role.name}",
+        description=(
+            f"عدد الأعضاء: **{len(role.members)}**\n"
+            f"اللون: **{role.color}**\n"
+            f"الترتيب: **{role.position}**"
+        ),
+        color=role.color
+    )
+    embed.set_footer(text="نايت فويد | Night Void")
+    await interaction.response.send_message(embed=embed)
+
+#Member slash
 @bot.tree.command(name="serverinfo", description="يعطيك معلومات عن السيرفر")
 async def serverinfo(interaction: discord.Interaction):
     human_count = len([m for m in interaction.guild.members if not m.bot])
@@ -97,5 +135,44 @@ async def serverinfo(interaction: discord.Interaction):
     embed.set_thumbnail(url=interaction.guild.icon.url)
     embed.set_footer(text="نايت فويد | Night Void")
     await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="userinfo", description="يعطيك معلومات عن نفسك")
+async def userinfo(interaction: discord.Interaction):
+    member = interaction.user
+    embed = discord.Embed(
+        title=f"معلومات عن {member}",
+        description=(
+            f"الاسم الكامل: **{member}**\n"
+            f"تاريخ الانضمام: **{member.joined_at.strftime('%Y-%m-%d')}**\n"
+            f"الحالة: **{member.status}**"
+        ),
+        color=0x9B59B6
+    )
+    embed.set_thumbnail(url=member.avatar.url)
+    embed.set_footer(text="نايت فويد | Night Void")
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="avatar", description="يعطيك صورة البروفايل حقك")
+async def avatar(interaction: discord.Interaction):
+    member = interaction.user
+    embed = discord.Embed(
+        title=f"صورة البروفايل حق {member}",
+        color=0x3498DB
+    )
+    embed.set_image(url=member.avatar.url)
+    embed.set_footer(text="نايت فويد | Night Void")
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="servericon", description="يعطيك صورة الايكون حق السيرفر")
+async def servericon(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title=f"صورة الايكون حق {interaction.guild.name}",
+        color=0xE67E22
+    )
+    embed.set_image(url=interaction.guild.icon.url)
+    embed.set_footer(text="نايت فويد | Night Void")
+    await interaction.response.send_message(embed=embed)
+
+
 
 bot.run(token)
