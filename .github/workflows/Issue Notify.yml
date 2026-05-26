@@ -1,0 +1,23 @@
+name: Issue Notify
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d "{
+            \"content\": \"<@&1506708922227097930>\",
+            \"embeds\": [{
+              \"title\": \"New Issue: ${{ github.event.issue.title }}\",
+              \"description\": \"${{ github.event.issue.body }}\",
+              \"url\": \"${{ github.event.issue.html_url }}\",
+              \"color\": 16711680
+            }]
+          }" \
+          ${{ secrets.DISCORD_WEBHOOK }}
