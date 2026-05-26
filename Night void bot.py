@@ -46,7 +46,7 @@ async def howmanyMemberCheckOnline(ctx):
 
 #Member prefix
 @bot.command()
-async def nightVoid(ctx):
+async def nightvoid(ctx):
     embed = discord.Embed(
         title="نايت فويد 🌙",
         description="بوت تم تطويره بواسطة <@904399821580943420>و<@1005827322844282951>. يهدف إلى تقديم تجربة فريدة وممتعة للأعضاء.",
@@ -64,7 +64,7 @@ async def prefix(ctx):
         description="البوت يستخدم البريفكس التالي: `!`",
         color=0x3498DB
     )
-    embed.add_field(name="معلومات من البوت", value="!nightVoid", inline=True)
+    embed.add_field(name="معلومات من البوت", value="!nightvoid", inline=True)
     embed.set_footer(text="نايت فويد | Night Void")
     await ctx.send(embed=embed)
 #Admin commands
@@ -75,7 +75,7 @@ async def ping(interaction: discord.Interaction):
         return
     
     embed = discord.Embed(
-        title="🏓 بونج!",
+        title=" بونج!",
         description=f"تأخير البوت: **{round(bot.latency * 1000)}ms**",
         color=0x2ECC71
     )
