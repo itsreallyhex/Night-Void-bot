@@ -1,0 +1,25 @@
+name: Discord Notify
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d "{
+           \"content\": \"<@&1506708922227097930>\",
+            \"embeds\": [{
+              \"title\": \"[${{ github.repository }}] commit جديد\",
+              \"description\": \"${{ github.event.head_commit.message }}\",
+              \"url\": \"${{ github.event.head_commit.url }}\",
+              \"color\": 4128767
+            }]
+          }" \
+          ${{ secrets.DISCORD_WEBHOOK }}
