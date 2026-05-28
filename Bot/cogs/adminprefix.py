@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from utilities import PermissionChecker
 
 
 class AdminPrefix(commands.Cog):
@@ -7,13 +8,17 @@ class AdminPrefix(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_permissions(administrator=True)
     async def howmanyMemberCheck(self, ctx):
+        if not PermissionChecker.is_admin(ctx.author):
+            await ctx.send("❌ ما عندك صلاحية!")
+            return
         await ctx.send(f"يوجد حالياً {len(ctx.guild.members)} عضو في نايت فويد")
 
     @commands.command()
-    @commands.has_permissions(administrator=True)
     async def howmanyMemberCheckOnline(self, ctx):
+        if not PermissionChecker.is_admin(ctx.author):
+            await ctx.send("❌ ما عندك صلاحية!")
+            return
         online_members = [member for member in ctx.guild.members
                           if (member.status != discord.Status.offline
                           or member.mobile_status != discord.Status.offline)

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+from utilities import PermissionChecker
 
 
 class AdminSlash(commands.Cog):
@@ -9,7 +10,7 @@ class AdminSlash(commands.Cog):
 
     @app_commands.command(name="ping", description="تحقق من تأخير البوت (ادمن فقط)")
     async def ping(self, interaction: discord.Interaction):
-        if not interaction.user.guild_permissions.administrator:
+        if not PermissionChecker.is_admin(interaction.user):
             await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
             return
         embed = discord.Embed(
@@ -22,7 +23,7 @@ class AdminSlash(commands.Cog):
 
     @app_commands.command(name="showmemberinfo", description="يعطيك معلومات عن العضو (ادمن فقط)")
     async def show_member_info(self, interaction: discord.Interaction, member: discord.Member):
-        if not interaction.user.guild_permissions.administrator:
+        if not PermissionChecker.is_admin(interaction.user):
             await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
             return
         embed = discord.Embed(
@@ -41,7 +42,7 @@ class AdminSlash(commands.Cog):
 
     @app_commands.command(name="showroleinfo", description="يعطيك معلومات عن الرتبة (ادمن فقط)")
     async def show_role_info(self, interaction: discord.Interaction, role: discord.Role):
-        if not interaction.user.guild_permissions.administrator:
+        if not PermissionChecker.is_admin(interaction.user):
             await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
             return
         embed = discord.Embed(
@@ -58,7 +59,7 @@ class AdminSlash(commands.Cog):
 
     @app_commands.command(name="getchannelinfo", description="يعطيك معلومات عن الروم (ادمن فقط)")
     async def get_channel_info(self, interaction: discord.Interaction, channel: discord.TextChannel):
-        if not interaction.user.guild_permissions.administrator:
+        if not PermissionChecker.is_admin(interaction.user):
             await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
             return
         messages = [msg async for msg in channel.history(limit=None)]
