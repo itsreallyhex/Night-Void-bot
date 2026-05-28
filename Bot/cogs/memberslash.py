@@ -34,16 +34,15 @@ class MemberSlash(commands.Cog):
                 f"الاسم الكامل: **{member}**\n"
                 f"تاريخ الانضمام: **{member.joined_at.strftime('%Y-%m-%d')}**\n"
                 f"الحالة: **{member.status}**"
-            ),
+            ), 
             color=0x9B59B6
         )
         embed.set_thumbnail(url=member.avatar.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="avatar", description="يعطيك صورة البروفايل حقك")
-    async def avatar(self, interaction: discord.Interaction):
-        member = interaction.user
+    @app_commands.command(name="avatar", description="يعطيك صورة البروفايل حق اي شخص تحدده")
+    async def avatar(self, interaction: discord.Interaction, member: discord.Member):
         embed = discord.Embed(
             title=f"صورة البروفايل حق {member}",
             color=0x3498DB
