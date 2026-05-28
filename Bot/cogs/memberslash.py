@@ -59,6 +59,7 @@ class MemberSlash(commands.Cog):
         embed.set_image(url=interaction.guild.icon.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
+    
 
 
 async def setup(bot):

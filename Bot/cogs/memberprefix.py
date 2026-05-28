@@ -28,6 +28,7 @@ class MemberPrefix(commands.Cog):
         embed.add_field(name="معلومات من البوت", value="!nightvoid", inline=True)
         embed.set_footer(text="نايت فويد | Night Void")
         await ctx.send(embed=embed)
+    
 
 
 async def setup(bot):

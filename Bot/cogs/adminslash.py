@@ -56,6 +56,23 @@ class AdminSlash(commands.Cog):
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
+        @app_commands.commands(name="getchannelinfo", description="يعطيك معلومات عن الروم (ادمن فقط)")
+        async def get_channel_info(self, interaction: discord.Interaction, channel: discord.TextChannel):
+            if not interaction.user.guild_permissions.administrator:
+                await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
+                return
+            embed = discord.Embed(
+                title=f"معلومات عن الروم {channel.name}",
+                description=(
+                    f"نوع الروم: **{str(channel.type).split('.')[-1]}**\n"
+                    f"عدد الرسائل: **{len(await channel.history(limit=None).flatten())}**\n"
+                    f"تاريخ الإنشاء: **{channel.created_at.strftime('%Y-%m-%d')}**"
+                ),
+                color=0x8E44AD
+            )
+            embed.set_footer(text="نايت فويد | Night Void")
+            await interaction.response.send_message(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(AdminSlash(bot))
