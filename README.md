@@ -11,9 +11,12 @@ The official Discord bot for the [Night Void server](https://discord.gg/sAakXRRu
 >You will need create .ev file for the bot to work.
 
 ## Built With
+>Note:  Railway read from dev branch not main.
 
 - [discord.py](https://discordpy.readthedocs.io/) - Discord API wrapper
 - [python-dotenv](https://pypi.org/project/python-dotenv/) - Environment variable management
+- [Railway](https://railway.com/) - Make bot up 24/7
+
 
 ## License
 
