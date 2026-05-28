@@ -60,6 +60,15 @@ class MemberSlash(commands.Cog):
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
     
+    @app_commands.command(name="makeembed", description="يساعدك تصنع امبد خاص فيك ")
+    async def makeembed(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="امبد مخصص",
+            description="هذا امبد تم صنعه باستخدام أمر /makeembed",
+            color=0x1ABC9C
+        )
+        embed.set_footer(text="تم صناع الامبد من قبل مستخدم وليس البوت!!")
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
