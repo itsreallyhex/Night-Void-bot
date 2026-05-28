@@ -14,7 +14,7 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
           -d "{
-           \"content\": \"<@&1506708922227097930>\",
+           \"content\": \"<@&1506708922227097930> \",
             \"embeds\": [{
               \"title\": \"[${{ github.repository }}] commit جديد\",
               \"description\": \"${{ github.event.head_commit.message }}\",
