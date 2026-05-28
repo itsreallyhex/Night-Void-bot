@@ -18,17 +18,5 @@ class MemberPrefix(commands.Cog):
         embed.set_footer(text="نايت فويد | Night Void")
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def prefix(self, ctx):
-        embed = discord.Embed(
-            title="البريفكس",
-            description="البوت يستخدم البريفكس التالي: `!`",
-            color=0x3498DB
-        )
-        embed.add_field(name="معلومات من البوت", value="!nightvoid", inline=True)
-        embed.set_footer(text="نايت فويد | Night Void")
-        await ctx.send(embed=embed)
-
-
 async def setup(bot):
-    await bot.add_cog(MemberPrefix(bot))
+    await bot.add_cog(MemberPrefix(bot)) 

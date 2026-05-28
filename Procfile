@@ -1,0 +1,1 @@
+worker: python Bots/Night\ void\ bot.py

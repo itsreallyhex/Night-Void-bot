@@ -32,16 +32,15 @@ class MemberSlash(commands.Cog):
                 f"الاسم الكامل: **{member}**\n"
                 f"تاريخ الانضمام: **{member.joined_at.strftime('%Y-%m-%d')}**\n"
                 f"الحالة: **{member.status}**"
-            ),
+            ), 
             color=0x9B59B6
         )
         embed.set_thumbnail(url=member.avatar.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="avatar", description="يعطيك صورة البروفايل حقك")
-    async def avatar(self, interaction: discord.Interaction):
-        member = interaction.user
+    @app_commands.command(name="avatar", description="يعطيك صورة البروفايل حق اي شخص تحدده")
+    async def avatar(self, interaction: discord.Interaction, member: discord.Member):
         embed = discord.Embed(
             title=f"صورة البروفايل حق {member}",
             color=0x3498DB
@@ -59,6 +58,24 @@ class MemberSlash(commands.Cog):
         embed.set_image(url=interaction.guild.icon.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
+    
+    @app_commands.command(name="makeembed", description="يساعدك تصنع امبد خاص فيك")
+    async def makeembed(self, interaction: discord.Interaction, title: str, text: str):
+        embed = discord.Embed(
+            title=title,
+            description=text,
+            color=discord.Color.random()
+        )
+        embed.set_footer(text=f"تم صناع الامبد من قبل {interaction.user}")
+        await interaction.response.send_message(embed=embed)
+
+    #@app_commands.command(name="randomnumber", description="يعطيك رقم عشوائي بين رقمين تحددهم")
+    #async def randomnumber(self, interaction: discord.Interaction, min: int, max: int):
+        #if min > max:
+          #  await interaction.response.send_message("الرقم الأول لازم يكون أصغر من الرقم الثاني.")
+           # return
+        #number = random.randint(min, max)
+        #await interaction.response.send_message(f"الرقم العشوائي بين {min} و {max} هو: **{number}**")
 
 
 async def setup(bot):
