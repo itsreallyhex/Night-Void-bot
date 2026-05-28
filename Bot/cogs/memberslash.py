@@ -1,5 +1,3 @@
-from random import random
-
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -62,11 +60,11 @@ class MemberSlash(commands.Cog):
         await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="makeembed", description="يساعدك تصنع امبد خاص فيك")
-    async def makeembed(self, interaction: discord.Interaction, title: str, text: str, color: str = "random"):
+    async def makeembed(self, interaction: discord.Interaction, title: str, text: str):
         embed = discord.Embed(
             title=title,
             description=text,
-            color=0x1ABC9C
+            color=discord.Color.random()
         )
         embed.set_footer(text=f"تم صناع الامبد من قبل {interaction.user}")
         await interaction.response.send_message(embed=embed)
