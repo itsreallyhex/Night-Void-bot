@@ -71,13 +71,13 @@ class MemberSlash(commands.Cog):
         embed.set_footer(text=f"تم صناع الامبد من قبل {interaction.user}")
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="randomnumber", description="يعطيك رقم عشوائي بين رقمين تحددهم")
-    async def randomnumber(self, interaction: discord.Interaction, min: int, max: int):
-        if min > max:
-            await interaction.response.send_message("الرقم الأول لازم يكون أصغر من الرقم الثاني.")
-            return
-        number = random.randint(min, max)
-        await interaction.response.send_message(f"الرقم العشوائي بين {min} و {max} هو: **{number}**")
+    #@app_commands.command(name="randomnumber", description="يعطيك رقم عشوائي بين رقمين تحددهم")
+    #async def randomnumber(self, interaction: discord.Interaction, min: int, max: int):
+        #if min > max:
+          #  await interaction.response.send_message("الرقم الأول لازم يكون أصغر من الرقم الثاني.")
+           # return
+        #number = random.randint(min, max)
+        #await interaction.response.send_message(f"الرقم العشوائي بين {min} و {max} هو: **{number}**")
 
 
 async def setup(bot):
