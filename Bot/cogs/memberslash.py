@@ -62,7 +62,7 @@ class MemberSlash(commands.Cog):
         await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="makeembed", description="يساعدك تصنع امبد خاص فيك")
-    async def makeembed(self, interaction: discord.Interaction, title: str, text: str):
+    async def makeembed(self, interaction: discord.Interaction, title: str, text: str, color: str = "random"):
         embed = discord.Embed(
             title=title,
             description=text,
