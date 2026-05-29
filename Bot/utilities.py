@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -51,3 +52,11 @@ class BotMentions:
     @staticmethod
     def fayz():
         return "<@1005827322844282951>"
+    
+    @staticmethod
+    def everyone():
+        return "@everyone"
+    
+    @staticmethod
+    def user(user: discord.User):
+        return f"<@{user.id}>"

@@ -8,7 +8,7 @@ The official Discord bot for the [Night Void server](https://discord.gg/sAakXRRu
 |----------|-------------|
 | `NIGHTVOID_TOKEN` | Your Discord bot token |
 | `GUILD_ID` | Your Discord server ID |
->You will need create .ev file for the bot to work.
+>You will need create .env file for the bot to work.
 
 ## Built With
 
