@@ -22,10 +22,10 @@ MY_GUILD = discord.Object(id=guild_id)
 
 class NightVoidBot(commands.Bot):
     async def setup_hook(self):
-        await self.load_extension("Bot.cogs.adminprefix")
-        await self.load_extension("Bot.cogs.adminslash")
-        await self.load_extension("Bot.cogs.memberprefix")
-        await self.load_extension("Bot.cogs.memberslash")
+        await self.load_extension("cogs.adminprefix")
+        await self.load_extension("cogs.adminslash")
+        await self.load_extension("cogs.memberprefix")
+        await self.load_extension("cogs.memberslash")
         self.tree.copy_global_to(guild=MY_GUILD)
         await self.tree.sync(guild=MY_GUILD)
 
