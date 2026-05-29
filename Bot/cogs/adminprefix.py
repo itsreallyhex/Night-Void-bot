@@ -24,12 +24,7 @@ class AdminPrefix(commands.Cog):
                           or member.mobile_status != discord.Status.offline)
                           and not member.bot]
         await ctx.send(f"يوجد حالياً {len(online_members)} عضو متصل في نايت فويد")
-    @commands.command()
-    async def whoisagoodboy(self, ctx):
-        if not PermissionChecker.is_admin(ctx.author):
-            await ctx.send("❌ ما عندك صلاحية!")
-            return  
-        await ctx.send(" انا! انا! هاوووووو🐶")
+    
 
 async def setup(bot):
     await bot.add_cog(AdminPrefix(bot))
