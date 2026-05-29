@@ -41,3 +41,13 @@ class EphemeralReply:
     @staticmethod
     async def send_embed(interaction, embed):
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+# Utility class for bot mentions
+class BotMentions:
+    @staticmethod
+    def Hex():
+        return "<@904399821580943420>"
+
+    @staticmethod
+    def fayz():
+        return "<@1005827322844282951>"

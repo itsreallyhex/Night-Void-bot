@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+from utilities import BotMentions, EphemeralReply
 
 
 class MemberSlash(commands.Cog):
@@ -76,7 +77,23 @@ class MemberSlash(commands.Cog):
            # return
         #number = random.randint(min, max)
         #await interaction.response.send_message(f"الرقم العشوائي بين {min} و {max} هو: **{number}**")
-
+    @app_commands.command(name="social", description="يعطيك روابط السوشيال ميديا حق hex, فايز")
+    async def social(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="روابط السوشيال ميديا حق Hex",
+            description=(
+                f"{BotMentions.Hex()}🔹 **Hex **\n"
+                "   - [يوتيوب](https://www.youtube.com/@itsreallyhex)\n"
+                "   - [انستجرام](https://www.instagram.com/igitshex/)\n"
+               # "   - [تيك توك](https://www.tiktok.com/)\n\n"
+               # f"{BotMentions.fayz()}🔹 **فايز**\n"
+               # "   - [يوتيوب](https://www.youtube.com/@FayzVoid)\n"
+               # "   - [انستجرام](https://www.instagram.com/fayzvoid/)\n"
+               # "   - [تيك توك](https://www.tiktok.com/@fayzvoid)"
+            ),
+            color=0x1ABC9C
+        )
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(MemberSlash(bot))
