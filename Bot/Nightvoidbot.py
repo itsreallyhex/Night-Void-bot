@@ -18,17 +18,21 @@ intents.typing = True
 intents.dm_messages = True
 intents.dm_reactions = True
 
-bot = commands.Bot(command_prefix="!", intents=intents)
 MY_GUILD = discord.Object(id=guild_id)
+
+class NightVoidBot(commands.Bot):
+    async def setup_hook(self):
+        await self.load_extension("Bot.cogs.adminprefix")
+        await self.load_extension("Bot.cogs.adminslash")
+        await self.load_extension("Bot.cogs.memberprefix")
+        await self.load_extension("Bot.cogs.memberslash")
+        self.tree.copy_global_to(guild=MY_GUILD)
+        await self.tree.sync(guild=MY_GUILD)
+
+bot = NightVoidBot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    await bot.load_extension("Bot.cogs.adminprefix")
-    await bot.load_extension("Bot.cogs.adminslash")
-    await bot.load_extension("Bot.cogs.memberprefix")
-    await bot.load_extension("Bot.cogs.memberslash")
-    bot.tree.copy_global_to(guild=MY_GUILD)
-    await bot.tree.sync(guild=MY_GUILD)
     print(f"{bot.user} has connected to Discord!")
 
 async def main():
