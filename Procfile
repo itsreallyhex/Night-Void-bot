@@ -1,1 +1,1 @@
-worker: python Bot/Night\ void\ bot.py
+worker: python Bots/Night\ void\ bot.py
