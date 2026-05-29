@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from utilities import PermissionChecker
+from utilities import PermissionChecker, EphemeralReply
 
 
 class AdminSlash(commands.Cog):
@@ -11,7 +11,7 @@ class AdminSlash(commands.Cog):
     @app_commands.command(name="ping", description="تحقق من تأخير البوت (ادمن فقط)")
     async def ping(self, interaction: discord.Interaction):
         if not PermissionChecker.is_admin(interaction.user):
-            await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
+            await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
             return
         embed = discord.Embed(
             title="بونج",
@@ -24,7 +24,7 @@ class AdminSlash(commands.Cog):
     @app_commands.command(name="showmemberinfo", description="يعطيك معلومات عن العضو (ادمن فقط)")
     async def show_member_info(self, interaction: discord.Interaction, member: discord.Member):
         if not PermissionChecker.is_admin(interaction.user):
-            await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
+            await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
             return
         embed = discord.Embed(
             title=f"معلومات عن {member}",
@@ -43,7 +43,7 @@ class AdminSlash(commands.Cog):
     @app_commands.command(name="showroleinfo", description="يعطيك معلومات عن الرتبة (ادمن فقط)")
     async def show_role_info(self, interaction: discord.Interaction, role: discord.Role):
         if not PermissionChecker.is_admin(interaction.user):
-            await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
+            await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
             return
         embed = discord.Embed(
             title=f"معلومات عن الرتبة {role.name}",
@@ -60,7 +60,7 @@ class AdminSlash(commands.Cog):
     @app_commands.command(name="getchannelinfo", description="يعطيك معلومات عن الروم (ادمن فقط)")
     async def get_channel_info(self, interaction: discord.Interaction, channel: discord.TextChannel):
         if not PermissionChecker.is_admin(interaction.user):
-            await interaction.response.send_message("❌ ما عندك صلاحية!", ephemeral=True)
+            await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
             return
         messages = [msg async for msg in channel.history(limit=None)]
         embed = discord.Embed(
@@ -74,6 +74,35 @@ class AdminSlash(commands.Cog):
         )
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="warning", description="يعطيك تحذير (ادمن فقط)")
+    async def warning(self, interaction: discord.Interaction, user: discord.User, reason: str):
+        if not PermissionChecker.is_admin(interaction.user):
+            await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
+            return
+        try:
+            await user.send(f"⚠️ تم إصدار تحذير لك في **{interaction.guild.name}**: {reason}")
+            await EphemeralReply.send(interaction, f"✅ تم إرسال التحذير لـ {user.mention} في الخاص.")
+        except discord.Forbidden:
+            await EphemeralReply.send(interaction, f"❌ تعذّر إرسال الخاص لـ {user.mention}، ربما أغلق الرسائل الخاصة.")
+
+    @app_commands.command(name="listbannedusers", description="يعطيك قائمة بالأعضاء المحظورين (ادمن فقط)")
+    async def list_banned_users(self, interaction: discord.Interaction):
+        if not PermissionChecker.is_admin(interaction.user):
+            await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
+            return
+        banned_users = await interaction.guild.bans()
+        if not banned_users:
+            await interaction.response.send_message("لا يوجد أعضاء محظورين في هذا السيرفر.")
+            return
+        embed = discord.Embed(
+            title="قائمة الأعضاء المحظورين",
+            description="\n".join([f"**{ban_entry.user}** - {ban_entry.reason or 'بدون سبب'}" for ban_entry in banned_users]),
+            color=0xC0392B
+        )
+        embed.set_footer(text="نايت فويد | Night Void")
+        await interaction.response.send_message(embed=embed)
+    
 
 
 async def setup(bot):
