@@ -75,7 +75,7 @@ class AdminSlash(commands.Cog):
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="Warning", description="يعطيك تحذير (ادمن فقط)")
+    @app_commands.command(name="warning", description="يعطيك تحذير (ادمن فقط)")
     async def warning(self, interaction: discord.Interaction, user: discord.User, reason: str):
         if not PermissionChecker.is_admin(interaction.user):
             await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
