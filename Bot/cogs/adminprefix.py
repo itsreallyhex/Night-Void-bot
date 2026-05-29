@@ -6,7 +6,13 @@ from utilities import PermissionChecker
 class AdminPrefix(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+    @commands.command()
+    async def ping(self, ctx):
+        if not PermissionChecker.is_admin(ctx.author):
+            await ctx.send("❌ ما عندك صلاحية!")
+            return
+        await ctx.send(f"تأخير البوت: **{round(self.bot.latency * 1000)}ms**")  
+        
     @commands.command()
     async def howmanyMemberCheck(self, ctx):
         if not PermissionChecker.is_admin(ctx.author):
