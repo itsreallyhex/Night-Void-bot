@@ -23,10 +23,10 @@ MY_GUILD = discord.Object(id=guild_id)
 
 @bot.event
 async def on_ready():
-    await bot.load_extension("cogs.adminprefix")
-    await bot.load_extension("cogs.adminslash")
-    await bot.load_extension("cogs.memberprefix")
-    await bot.load_extension("cogs.memberslash")
+    await bot.load_extension("Bot.cogs.adminprefix")
+    await bot.load_extension("Bot.cogs.adminslash")
+    await bot.load_extension("Bot.cogs.memberprefix")
+    await bot.load_extension("Bot.cogs.memberslash")
     bot.tree.copy_global_to(guild=MY_GUILD)
     await bot.tree.sync(guild=MY_GUILD)
     print(f"{bot.user} has connected to Discord!")
