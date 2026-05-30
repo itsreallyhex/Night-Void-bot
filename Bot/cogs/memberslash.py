@@ -1,7 +1,10 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+import discord.ui
 from utilities import BotMentions, EphemeralReply
+from logger import setup_logger
+logger = setup_logger("NightVoid.MemberSlashCog")
 
 
 class MemberSlash(commands.Cog):

@@ -3,6 +3,8 @@ import os
 import asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
+from logger import setup_logger
+logger = setup_logger("NightVoidBot")
 
 load_dotenv()
 token = os.getenv("NIGHTVOID_TOKEN")

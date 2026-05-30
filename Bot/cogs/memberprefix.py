@@ -1,5 +1,7 @@
 import discord
 from discord.ext import commands
+from logger import setup_logger
+logger = setup_logger("NightVoid.MemberPrefixCog")
 
 
 class MemberPrefix(commands.Cog):
