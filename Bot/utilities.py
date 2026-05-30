@@ -1,29 +1,31 @@
 import discord
 from discord.ext import commands
+from logger import setup_logger
+_logger = setup_logger("NightVoid.Utilities")
 
 
 class AdminSlash(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print("AdminSlash cog loaded")
+        _logger.info("AdminSlash cog loaded")
 
 
 class MemberSlash(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print("MemberSlash cog loaded")
+        _logger.info("MemberSlash cog loaded")
 
 
 class AdminPrefix(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print("AdminPrefix cog loaded")
+        _logger.info("AdminPrefix cog loaded")
 
 
 class MemberPrefix(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print("MemberPrefix cog loaded")
+        _logger.info("MemberPrefix cog loaded")
 
 class PermissionChecker:
     @staticmethod
