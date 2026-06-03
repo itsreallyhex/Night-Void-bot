@@ -98,5 +98,20 @@ class MemberSlash(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(name="botinfo", description="يعطيك معلومات عن البوت")
+    async def botinfo(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="معلومات عن البوت",
+            description=(
+                f"الاسم: **{self.bot.user}**\n"
+                f"المطور: {BotMentions.Hex()}\n"
+                f"تاريخ الإنشاء: **{self.bot.user.created_at.strftime('%Y-%m-%d')}**\n"
+                f"عدد السيرفرات: **{len(self.bot.guilds)}**\n"
+                f"عدد الأعضاء: **{len(sef.bot.users)}**"
+            ),
+            color=0x3498DB
+        )
+        await interaction.response.send_message(embed=embed)
+
 async def setup(bot):
     await bot.add_cog(MemberSlash(bot))
