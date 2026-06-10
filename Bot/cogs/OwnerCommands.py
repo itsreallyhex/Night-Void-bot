@@ -56,11 +56,10 @@ class OwnerCommands(commands.Cog):
         memory = process.memory_info().rss / 1024 / 1024
         uptime = discord.utils.utcnow() - self.bot.start_time
 
-        embed = discord.Embed(title="🤖 Bot Stats", color=0x2b2d31)
+        embed = discord.Embed(title="معلومات البوت", color=0x2b2d31)
         embed.add_field(name="السيرفرات", value=len(self.bot.guilds), inline=True)
-        embed.add_field(name="المستخدمين", value=len(self.bot.users), inline=True)
-        embed.add_field(name="Memory", value=f"{memory:.2f} MB", inline=True)
-        embed.add_field(name="Uptime", value=str(uptime).split(".")[0], inline=True)
+        embed.add_field(name="الذاكرة", value=f"{memory:.2f} MB", inline=True)
+        embed.add_field(name="وقت التشغيل", value=str(uptime).split(".")[0], inline=True)
         embed.add_field(name="Python", value=platform.python_version(), inline=True)
         embed.add_field(name="discord.py", value=discord.__version__, inline=True)
 
