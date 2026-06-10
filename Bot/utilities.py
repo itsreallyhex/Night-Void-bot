@@ -35,6 +35,10 @@ class PermissionChecker:
     @staticmethod
     def has_permission(member, permission: str) -> bool:
         return getattr(member.guild_permissions, permission, False)
+
+    @staticmethod
+    async def is_owner(bot: commands.Bot, user: discord.User) -> bool:
+        return await bot.is_owner(user)
     
 class EphemeralReply:
     @staticmethod
