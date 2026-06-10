@@ -106,8 +106,7 @@ class MemberSlash(commands.Cog):
                 f"الاسم: **{self.bot.user}**\n"
                 f"المطور: {BotMentions.Hex()}\n"
                 f"تاريخ الإنشاء: **{self.bot.user.created_at.strftime('%Y-%m-%d')}**\n"
-                f"عدد السيرفرات: **{len(self.bot.guilds)}**\n"
-                f"عدد الأعضاء: **{len(sef.bot.users)}**"
+                f"عدد الأعضاء: **{len(self.bot.users)}**"
             ),
             color=0x3498DB
         )
