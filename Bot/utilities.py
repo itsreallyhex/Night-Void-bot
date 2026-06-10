@@ -5,6 +5,8 @@ from logger import setup_logger
 
 _logger = setup_logger("NightVoid.Utilities")
 
+# Here to change the cooldown time for both prefix and slash commands.
+# Like to keep it a bit higher to prevent spam and abuse, but you can change it to whatever you want. 
 COOLDOWN_SECONDS = 20
 
 def slash_cooldown(seconds: int = COOLDOWN_SECONDS):
