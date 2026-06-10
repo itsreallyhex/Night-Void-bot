@@ -29,17 +29,22 @@ class MemberPrefix(commands.Cog):
 
 class PermissionChecker:
     @staticmethod
-    def is_admin(member) -> bool:
+    def is_admin(member: discord.Member) -> bool:
         return member.guild_permissions.administrator
 
     @staticmethod
-    def has_permission(member, permission: str) -> bool:
+    def has_permission(member: discord.Member, permission: str) -> bool:
         return getattr(member.guild_permissions, permission, False)
 
+    # Check if the user is the guild owner/ Server owner
     @staticmethod
-    async def is_owner(bot: commands.Bot, user: discord.User) -> bool:
+    def is_guild_owner(member: discord.Member) -> bool:
+        return member.guild.owner_id == member.id
+
+    # Check if the user is the bot owner. Aka the person who created the bot 
+    @staticmethod
+    async def is_bot_owner(bot: commands.Bot, user: discord.User) -> bool:
         return await bot.is_owner(user)
-    
 class EphemeralReply:
     @staticmethod
     async def send(interaction, message: str):

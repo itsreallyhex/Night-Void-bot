@@ -28,11 +28,13 @@ class NightVoidBot(commands.Bot):
         await self.load_extension("cogs.adminslash")
         await self.load_extension("cogs.memberprefix")
         await self.load_extension("cogs.memberslash")
+        await self.load_extension("cogs.OwnerCommands")
         self.tree.copy_global_to(guild=MY_GUILD)
         synced = await self.tree.sync(guild=MY_GUILD)
         logger.info(f"Synced {len(synced)} slash commands: {[c.name for c in synced]}")
 
 bot = NightVoidBot(command_prefix="!", intents=intents)
+bot.start_time = discord.utils.utcnow() 
 
 @bot.event
 async def on_ready():
