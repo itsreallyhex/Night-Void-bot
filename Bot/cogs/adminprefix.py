@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 from utilities import PermissionChecker
+from logger import setup_logger
+logger = setup_logger("NightVoid.AdminPrefixCog")
 
 
 class AdminPrefix(commands.Cog):

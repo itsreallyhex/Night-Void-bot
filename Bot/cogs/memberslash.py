@@ -1,7 +1,10 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+import discord.ui
 from utilities import BotMentions, EphemeralReply
+from logger import setup_logger
+logger = setup_logger("NightVoid.MemberSlashCog")
 
 
 class MemberSlash(commands.Cog):
@@ -92,6 +95,20 @@ class MemberSlash(commands.Cog):
                # "   - [تيك توك](https://www.tiktok.com/@fayzvoid)"
             ),
             color=0x1ABC9C
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="botinfo", description="يعطيك معلومات عن البوت")
+    async def botinfo(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="معلومات عن البوت",
+            description=(
+                f"الاسم: **{self.bot.user}**\n"
+                f"المطور: {BotMentions.Hex()}\n"
+                f"تاريخ الإنشاء: **{self.bot.user.created_at.strftime('%Y-%m-%d')}**\n"
+                f"عدد الأعضاء: **{len(self.bot.users)}**"
+            ),
+            color=0x3498DB
         )
         await interaction.response.send_message(embed=embed)
 

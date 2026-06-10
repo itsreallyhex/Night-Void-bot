@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from utilities import PermissionChecker, EphemeralReply
-
+from logger import setup_logger
+logger = setup_logger("NightVoid.AdminSlashCog")
 
 class AdminSlash(commands.Cog):
     def __init__(self, bot):
