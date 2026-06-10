@@ -5,7 +5,7 @@ import os
 import asyncio
 from discord.ext import commands
 from discord import app_commands
-from utilities import PermissionChecker
+from utilities import PermissionChecker, prefix_cooldown
 from logger import setup_logger
 
 _logger = setup_logger("NightVoid.OwnerCommands")
@@ -16,6 +16,7 @@ class OwnerCommands(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @prefix_cooldown()
     async def sync(self, ctx):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")
@@ -24,6 +25,7 @@ class OwnerCommands(commands.Cog):
         await ctx.send(f"✅ تم مزامنة {len(synced)} أمر")
 
     @commands.command()
+    @prefix_cooldown()
     async def reload(self, ctx):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")
@@ -48,6 +50,7 @@ class OwnerCommands(commands.Cog):
 
     # All codes under this was made by the helpe of Claude Code.
     @commands.command()
+    @prefix_cooldown()
     async def botstats(self, ctx):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")
@@ -68,6 +71,7 @@ class OwnerCommands(commands.Cog):
 
     # Usage: !setstatus playing Valorant | !setstatus watching the server | !setstatus clear
     @commands.command()
+    @prefix_cooldown()
     async def setstatus(self, ctx, activity_type: str = None, *, text: str = None):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")
@@ -96,6 +100,7 @@ class OwnerCommands(commands.Cog):
 
     # Usage: !dmall <message> — DMs every (non-bot) member with a delay to avoid spam flags
     @commands.command()
+    @prefix_cooldown()
     async def dmall(self, ctx, *, message: str = None):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")

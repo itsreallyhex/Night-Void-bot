@@ -1,7 +1,19 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 from logger import setup_logger
+
 _logger = setup_logger("NightVoid.Utilities")
+
+COOLDOWN_SECONDS = 20
+
+def slash_cooldown(seconds: int = COOLDOWN_SECONDS):
+    """Per-user cooldown decorator for slash (app) commands."""
+    return app_commands.checks.cooldown(1, seconds, key=lambda i: i.user.id)
+
+def prefix_cooldown(seconds: int = COOLDOWN_SECONDS):
+    """Per-user cooldown decorator for prefix commands."""
+    return commands.cooldown(1, seconds, commands.BucketType.user)
 
 
 class AdminSlash(commands.Cog):

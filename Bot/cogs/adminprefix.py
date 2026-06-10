@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utilities import PermissionChecker
+from utilities import PermissionChecker, prefix_cooldown
 from logger import setup_logger
 logger = setup_logger("NightVoid.AdminPrefixCog")
 
@@ -9,6 +9,7 @@ class AdminPrefix(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     @commands.command()
+    @prefix_cooldown()
     async def ping(self, ctx):
         if not PermissionChecker.is_admin(ctx.author):
             await ctx.send("❌ ما عندك صلاحية!")
@@ -16,6 +17,7 @@ class AdminPrefix(commands.Cog):
         await ctx.send(f"تأخير البوت: **{round(self.bot.latency * 1000)}ms**")  
         
     @commands.command()
+    @prefix_cooldown()
     async def howmanyMemberCheck(self, ctx):
         if not PermissionChecker.is_admin(ctx.author):
             await ctx.send("❌ ما عندك صلاحية!")
@@ -23,6 +25,7 @@ class AdminPrefix(commands.Cog):
         await ctx.send(f"يوجد حالياً {len(ctx.guild.members)} عضو في نايت فويد")
 
     @commands.command()
+    @prefix_cooldown()
     async def howmanyMemberCheckOnline(self, ctx):
         if not PermissionChecker.is_admin(ctx.author):
             await ctx.send("❌ ما عندك صلاحية!")

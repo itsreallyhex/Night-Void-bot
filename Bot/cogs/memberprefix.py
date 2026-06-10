@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
+from utilities import prefix_cooldown
 from logger import setup_logger
+
 logger = setup_logger("NightVoid.MemberPrefixCog")
 
 
@@ -9,6 +11,7 @@ class MemberPrefix(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @prefix_cooldown()
     async def nightvoid(self, ctx):
         embed = discord.Embed(
             title="نايت فويد 🌙",
