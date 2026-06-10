@@ -23,7 +23,8 @@ class MemberSlash(commands.Cog):
             ),
             color=0xE67E22
         )
-        embed.set_thumbnail(url=interaction.guild.icon.url)
+        if interaction.guild.icon:
+            embed.set_thumbnail(url=interaction.guild.icon.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
@@ -36,10 +37,10 @@ class MemberSlash(commands.Cog):
                 f"الاسم الكامل: **{member}**\n"
                 f"تاريخ الانضمام: **{member.joined_at.strftime('%Y-%m-%d')}**\n"
                 f"الحالة: **{member.status}**"
-            ), 
+            ),
             color=0x9B59B6
         )
-        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_thumbnail(url=member.display_avatar.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
@@ -49,12 +50,15 @@ class MemberSlash(commands.Cog):
             title=f"صورة البروفايل حق {member}",
             color=0x3498DB
         )
-        embed.set_image(url=member.avatar.url)
+        embed.set_image(url=member.display_avatar.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="servericon", description="يعطيك صورة الايكون حق السيرفر")
     async def servericon(self, interaction: discord.Interaction):
+        if not interaction.guild.icon:
+            await interaction.response.send_message("❌ ما عند السيرفر صورة ايكون.", ephemeral=True)
+            return
         embed = discord.Embed(
             title=f"صورة الايكون حق {interaction.guild.name}",
             color=0xE67E22

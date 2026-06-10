@@ -37,7 +37,7 @@ class AdminSlash(commands.Cog):
             ),
             color=0xE74C3C
         )
-        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_thumbnail(url=member.display_avatar.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
@@ -63,12 +63,14 @@ class AdminSlash(commands.Cog):
         if not PermissionChecker.is_admin(interaction.user):
             await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
             return
-        messages = [msg async for msg in channel.history(limit=None)]
+        HISTORY_LIMIT = 500
+        messages = [msg async for msg in channel.history(limit=HISTORY_LIMIT)]
+        msg_count = f"{len(messages)}{'+'  if len(messages) == HISTORY_LIMIT else ''}"
         embed = discord.Embed(
             title=f"معلومات عن الروم {channel.name}",
             description=(
                 f"نوع الروم: **{str(channel.type).split('.')[-1]}**\n"
-                f"عدد الرسائل: **{len(messages)}**\n"
+                f"عدد الرسائل (آخر {HISTORY_LIMIT}): **{msg_count}**\n"
                 f"تاريخ الإنشاء: **{channel.created_at.strftime('%Y-%m-%d')}**"
             ),
             color=0x8E44AD
