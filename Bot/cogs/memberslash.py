@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import discord.ui
-from utilities import BotMentions, EphemeralReply
+from utilities import BotMentions, EphemeralReply, slash_cooldown
 from logger import setup_logger
 logger = setup_logger("NightVoid.MemberSlashCog")
 
@@ -12,6 +12,7 @@ class MemberSlash(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="serverinfo", description="يعطيك معلومات عن السيرفر")
+    @slash_cooldown()
     async def serverinfo(self, interaction: discord.Interaction):
         human_count = len([m for m in interaction.guild.members if not m.bot])
         embed = discord.Embed(
@@ -23,11 +24,13 @@ class MemberSlash(commands.Cog):
             ),
             color=0xE67E22
         )
-        embed.set_thumbnail(url=interaction.guild.icon.url)
+        if interaction.guild.icon:
+            embed.set_thumbnail(url=interaction.guild.icon.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="userinfo", description="يعطيك معلومات عن نفسك")
+    @slash_cooldown()
     async def userinfo(self, interaction: discord.Interaction):
         member = interaction.user
         embed = discord.Embed(
@@ -36,25 +39,30 @@ class MemberSlash(commands.Cog):
                 f"الاسم الكامل: **{member}**\n"
                 f"تاريخ الانضمام: **{member.joined_at.strftime('%Y-%m-%d')}**\n"
                 f"الحالة: **{member.status}**"
-            ), 
+            ),
             color=0x9B59B6
         )
-        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_thumbnail(url=member.display_avatar.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="avatar", description="يعطيك صورة البروفايل حق اي شخص تحدده")
+    @slash_cooldown()
     async def avatar(self, interaction: discord.Interaction, member: discord.Member):
         embed = discord.Embed(
             title=f"صورة البروفايل حق {member}",
             color=0x3498DB
         )
-        embed.set_image(url=member.avatar.url)
+        embed.set_image(url=member.display_avatar.url)
         embed.set_footer(text="نايت فويد | Night Void")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="servericon", description="يعطيك صورة الايكون حق السيرفر")
+    @slash_cooldown()
     async def servericon(self, interaction: discord.Interaction):
+        if not interaction.guild.icon:
+            await interaction.response.send_message("❌ ما عند السيرفر صورة ايكون.", ephemeral=True)
+            return
         embed = discord.Embed(
             title=f"صورة الايكون حق {interaction.guild.name}",
             color=0xE67E22
@@ -64,6 +72,7 @@ class MemberSlash(commands.Cog):
         await interaction.response.send_message(embed=embed)
     
     @app_commands.command(name="makeembed", description="يساعدك تصنع امبد خاص فيك")
+    @slash_cooldown()
     async def makeembed(self, interaction: discord.Interaction, title: str, text: str):
         embed = discord.Embed(
             title=title,
@@ -81,6 +90,7 @@ class MemberSlash(commands.Cog):
         #number = random.randint(min, max)
         #await interaction.response.send_message(f"الرقم العشوائي بين {min} و {max} هو: **{number}**")
     @app_commands.command(name="social", description="يعطيك روابط السوشيال ميديا حق hex, فايز")
+    @slash_cooldown()
     async def social(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="روابط السوشيال ميديا حق Hex",
@@ -99,6 +109,7 @@ class MemberSlash(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="botinfo", description="يعطيك معلومات عن البوت")
+    @slash_cooldown()
     async def botinfo(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="معلومات عن البوت",
