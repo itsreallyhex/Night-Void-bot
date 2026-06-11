@@ -9,15 +9,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send to Discord
+        env:
+          TITLE: ${{ github.event.issue.title }}
+          BODY: ${{ github.event.issue.body }}
+          URL: ${{ github.event.issue.html_url }}
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          curl -H "Content-Type: application/json" \
-          -d "{
-            \"content\": \"<@&1506708922227097930>\",
-            \"embeds\": [{
-              \"title\": \"New Issue: ${{ github.event.issue.title }}\",
-              \"description\": \"${{ github.event.issue.body }}\",
-              \"url\": \"${{ github.event.issue.html_url }}\",
-              \"color\": 16711680
-            }]
-          }" \
-          ${{ secrets.DISCORD_WEBHOOK }}
+          payload=$(jq -n \
+            --arg title "New Issue: $TITLE" \
+            --arg body "${BODY:-No description provided.}" \
+            --arg url "$URL" \
+            '{
+              content: "<@&1506708922227097930>",
+              allowed_mentions: { roles: ["1506708922227097930"] },
+              embeds: [{
+                title: $title,
+                description: $body,
+                url: $url,
+                color: 16711680
+              }]
+            }')
+          curl -sf -H "Content-Type: application/json" -d "$payload" "$WEBHOOK"

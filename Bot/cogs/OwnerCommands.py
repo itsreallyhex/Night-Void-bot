@@ -3,17 +3,71 @@ import platform
 import psutil
 import os
 import asyncio
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
 from utilities import PermissionChecker, prefix_cooldown
 from logger import setup_logger
 
 _logger = setup_logger("NightVoid.OwnerCommands")
 
+ACTIVITY_TYPES = {
+    "playing": discord.ActivityType.playing,
+    "watching": discord.ActivityType.watching,
+    "listening": discord.ActivityType.listening,
+    "competing": discord.ActivityType.competing,
+}
+
+
+def _format_elapsed(delta) -> str:
+    """Turn a timedelta into a short '2d 3h 15m' string for the status."""
+    total_minutes = int(delta.total_seconds() // 60)
+    days, rem = divmod(total_minutes, 1440)
+    hours, minutes = divmod(rem, 60)
+    parts = []
+    if days:
+        parts.append(f"{days}d")
+    if hours:
+        parts.append(f"{hours}h")
+    parts.append(f"{minutes}m")
+    return " ".join(parts)
+
+
 # THIS COMMAND/PREFIX ONLY FOR OWNER OF THE BOT. NOT SERVER OWNER.
 class OwnerCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+
+        # The custom-status feature is fully optional: if STATUS_TEXT isn't set in
+        # the environment, status_text stays None and the bot just runs without it.
+        self.status_type = os.getenv("STATUS_TYPE", "watching")
+        self.status_text = os.getenv("STATUS_TEXT") or None
+        self.status_since = discord.utils.utcnow()
+        self._status_updater.start()
+
+    def cog_unload(self):
+        # Stop the loop when the cog is reloaded/unloaded so we don't stack timers.
+        self._status_updater.cancel()
+
+    def _build_activity(self) -> discord.BaseActivity:
+        """Build the presence from the current status state (+ timer for verb types)."""
+        if self.status_type == "custom":  # note-style: verb-less, no timer, just the text
+            return discord.CustomActivity(name=self.status_text)
+        elapsed = _format_elapsed(discord.utils.utcnow() - self.status_since)
+        atype = ACTIVITY_TYPES.get(self.status_type, discord.ActivityType.watching)
+        return discord.Activity(type=atype, name=f"{self.status_text} • {elapsed}")
+
+    # Refreshes the presence once a minute so the "watching for X" timer ticks.
+    # Discord rate-limits presence updates, so a 1-minute cadence is the safe choice.
+    @tasks.loop(minutes=1)
+    async def _status_updater(self):
+        if not self.status_text:  # None == not configured or cleared
+            return
+        await self.bot.change_presence(activity=self._build_activity())
+
+    @_status_updater.before_loop
+    async def _before_status_updater(self):
+        await self.bot.wait_until_ready()
 
     @commands.command()
     @prefix_cooldown()
@@ -21,8 +75,11 @@ class OwnerCommands(commands.Cog):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")
             return
-        synced = await self.bot.tree.sync()
-        await ctx.send(f"✅ تم مزامنة {len(synced)} أمر")
+        self.bot.tree.clear_commands(guild=None)
+        await self.bot.tree.sync()  
+        self.bot.tree.copy_global_to(guild=self.bot.main_guild)
+        synced = await self.bot.tree.sync(guild=self.bot.main_guild)
+        await ctx.send(f"✅ تم مزامنة {len(synced)} أمر (سيرفر)")
 
     @commands.command()
     @prefix_cooldown()
@@ -69,7 +126,7 @@ class OwnerCommands(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    # Usage: !setstatus playing Valorant | !setstatus watching the server | !setstatus clear
+    # Usage: !setstatus playing Valorant | !setstatus custom 🌙 Night Void | !setstatus clear
     @commands.command()
     @prefix_cooldown()
     async def setstatus(self, ctx, activity_type: str = None, *, text: str = None):
@@ -78,23 +135,20 @@ class OwnerCommands(commands.Cog):
             return
 
         if activity_type == "clear":
+            self.status_text = None  # tells the loop to stop managing presence
             await self.bot.change_presence(activity=None)
             await ctx.send("✅ تم مسح الحالة")
             return
 
-        types = {
-            "playing": discord.ActivityType.playing,
-            "watching": discord.ActivityType.watching,
-            "listening": discord.ActivityType.listening,
-            "competing": discord.ActivityType.competing,
-        }
-
-        if activity_type not in types or text is None:
-            await ctx.send("❌ الاستخدام: `!setstatus <playing|watching|listening|competing> <نص>` أو `!setstatus clear`")
+        if (activity_type not in ACTIVITY_TYPES and activity_type != "custom") or text is None:
+            await ctx.send("❌ الاستخدام: `!setstatus <playing|watching|listening|competing|custom> <نص>` أو `!setstatus clear`")
             return
 
-        activity = discord.Activity(type=types[activity_type], name=text)
-        await self.bot.change_presence(activity=activity)
+        # Update the shared state and reset the timer; the loop keeps it ticking after this.
+        self.status_type = activity_type
+        self.status_text = text
+        self.status_since = discord.utils.utcnow()
+        await self.bot.change_presence(activity=self._build_activity())
         _logger.info(f"Status changed to: {activity_type} {text}")
         await ctx.send(f"✅ تم تغيير الحالة إلى: **{activity_type} {text}**")
 

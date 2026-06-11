@@ -19,6 +19,7 @@ if not raw_guild_id:
 
 guild_id = int(raw_guild_id)
 
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -71,6 +72,8 @@ class NightVoidBot(commands.Bot):
 
 bot = NightVoidBot(command_prefix="!", intents=intents)
 bot.start_time = discord.utils.utcnow()
+bot.main_guild = MY_GUILD
+
 
 @bot.event
 async def on_ready():
