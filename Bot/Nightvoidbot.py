@@ -19,9 +19,6 @@ if not raw_guild_id:
 
 guild_id = int(raw_guild_id)
 
-# Default presence, set in the Railway dashboard so it survives redeploys.
-default_status_type = os.getenv("STATUS_TYPE", "watching")
-default_status_text = os.getenv("STATUS_TEXT", "Night Void")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -77,9 +74,6 @@ bot = NightVoidBot(command_prefix="!", intents=intents)
 bot.start_time = discord.utils.utcnow()
 bot.main_guild = MY_GUILD
 
-# Live presence state. Seeded from env (Railway) so it reappears after a restart.
-bot.status_text = default_status_text
-bot.status_since = discord.utils.utcnow()
 
 @bot.event
 async def on_ready():

@@ -32,30 +32,36 @@ def _format_elapsed(delta) -> str:
     return " ".join(parts)
 
 
-def _build_activity(bot) -> discord.Activity:
-    """Build the presence from the bot's live status state + elapsed timer."""
-    atype = ACTIVITY_TYPES.get(bot.status_type, discord.ActivityType.watching)
-    elapsed = _format_elapsed(discord.utils.utcnow() - bot.status_since)
-    return discord.Activity(type=atype, name=f"{bot.status_text} • {elapsed}")
-
-
 # THIS COMMAND/PREFIX ONLY FOR OWNER OF THE BOT. NOT SERVER OWNER.
 class OwnerCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+
+        # The custom-status feature is fully optional: if STATUS_TEXT isn't set in
+        # the environment, status_text stays None and the bot just runs without it.
+        self.status_type = os.getenv("STATUS_TYPE", "watching")
+        self.status_text = os.getenv("STATUS_TEXT") or None
+        self.status_since = discord.utils.utcnow()
         self._status_updater.start()
 
     def cog_unload(self):
         # Stop the loop when the cog is reloaded/unloaded so we don't stack timers.
         self._status_updater.cancel()
 
+    def _build_activity(self) -> discord.Activity:
+        """Build the presence from the current status state + elapsed timer."""
+        atype = ACTIVITY_TYPES.get(self.status_type, discord.ActivityType.watching)
+        elapsed = _format_elapsed(discord.utils.utcnow() - self.status_since)
+        return discord.Activity(type=atype, name=f"{self.status_text} • {elapsed}")
+
     # Refreshes the presence once a minute so the "watching for X" timer ticks.
     # Discord rate-limits presence updates, so a 1-minute cadence is the safe choice.
     @tasks.loop(minutes=1)
     async def _status_updater(self):
-        if not self.bot.status_text:  # None == status was cleared
+        if not self.status_text:  # None == not configured or cleared
             return
-        await self.bot.change_presence(activity=_build_activity(self.bot))
+        await self.bot.change_presence(activity=self._build_activity())
 
     @_status_updater.before_loop
     async def _before_status_updater(self):
@@ -127,7 +133,7 @@ class OwnerCommands(commands.Cog):
             return
 
         if activity_type == "clear":
-            self.bot.status_text = None  # tells the loop to stop managing presence
+            self.status_text = None  # tells the loop to stop managing presence
             await self.bot.change_presence(activity=None)
             await ctx.send("✅ تم مسح الحالة")
             return
@@ -137,10 +143,10 @@ class OwnerCommands(commands.Cog):
             return
 
         # Update the shared state and reset the timer; the loop keeps it ticking after this.
-        self.bot.status_type = activity_type
-        self.bot.status_text = text
-        self.bot.status_since = discord.utils.utcnow()
-        await self.bot.change_presence(activity=_build_activity(self.bot))
+        self.status_type = activity_type
+        self.status_text = text
+        self.status_since = discord.utils.utcnow()
+        await self.bot.change_presence(activity=self._build_activity())
         _logger.info(f"Status changed to: {activity_type} {text}")
         await ctx.send(f"✅ تم تغيير الحالة إلى: **{activity_type} {text}**")
 
