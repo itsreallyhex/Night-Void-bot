@@ -50,13 +50,12 @@ class OwnerCommands(commands.Cog):
         self._status_updater.cancel()
 
     def _build_activity(self) -> discord.BaseActivity:
-        """Build the presence from the current status state + elapsed timer."""
+        """Build the presence from the current status state (+ timer for verb types)."""
+        if self.status_type == "custom":  # note-style: verb-less, no timer, just the text
+            return discord.CustomActivity(name=self.status_text)
         elapsed = _format_elapsed(discord.utils.utcnow() - self.status_since)
-        name = f"{self.status_text} • {elapsed}"
-        if self.status_type == "custom":  # verb-less, just the text
-            return discord.CustomActivity(name=name)
         atype = ACTIVITY_TYPES.get(self.status_type, discord.ActivityType.watching)
-        return discord.Activity(type=atype, name=name)
+        return discord.Activity(type=atype, name=f"{self.status_text} • {elapsed}")
 
     # Refreshes the presence once a minute so the "watching for X" timer ticks.
     # Discord rate-limits presence updates, so a 1-minute cadence is the safe choice.
