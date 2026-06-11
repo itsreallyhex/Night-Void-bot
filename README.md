@@ -12,6 +12,7 @@ Discord bot for the [Night Void server](https://discord.gg/sAakXRRudu). Moderati
 - **Warning system** — admins can DM warnings directly from a slash command
 - **Cooldown on everything** — 20-second per-user cooldown across all commands, both prefix and slash
 - **Owner commands** — a private Cog restricted to whoever runs the bot. Includes reloading all Cogs live without restarting, syncing slash commands, changing the bot status, checking memory usage and uptime, and mass-DMing every server member with a confirmation step and rate-limiting built in. Anyone who deploys this with their own token gets full access to all of it
+> Mass-DMing is a feature you use at your own risk. I am not responsible if your bot gets flagged, rate-limited, or banned by Discord.
 
 ---
 
