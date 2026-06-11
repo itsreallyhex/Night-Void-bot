@@ -59,7 +59,7 @@ pip install -r requirements.txt
 **3. Create a `.env` file**
 
 ```env
-NIGHTVOID_TOKEN=your_discord_bot_token_here
+BOT_TOKEN=your_discord_bot_token_here
 GUILD_ID=your_server_id_here
 ```
 
@@ -75,7 +75,7 @@ python Bot/Nightvoidbot.py
 
 | Variable | Description |
 |---|---|
-| `NIGHTVOID_TOKEN` | Your Discord bot token |
+| `BOT_TOKEN` | Your Discord bot token |
 | `GUILD_ID` | Your Discord server ID |
 
 For GitHub Actions, add `DISCORD_WEBHOOK` to your repo secrets (Settings → Secrets and variables → Actions):

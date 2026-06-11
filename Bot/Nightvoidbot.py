@@ -9,11 +9,11 @@ from logger import setup_logger
 logger = setup_logger("NightVoidBot")
 
 load_dotenv()
-token = os.getenv("NIGHTVOID_TOKEN")
+token = os.getenv("BOT_TOKEN")
 raw_guild_id = os.getenv("GUILD_ID")
 
 if not token:
-    raise ValueError("NIGHTVOID_TOKEN is not set in environment variables")
+    raise ValueError("BOT_TOKEN is not set in environment variables")
 if not raw_guild_id:
     raise ValueError("GUILD_ID is not set in environment variables")
 
@@ -101,7 +101,7 @@ async def main():
         try:
             await bot.start(token)
         except discord.LoginFailure:
-            logger.critical("Invalid Discord token. Check NIGHTVOID_TOKEN.")
+            logger.critical("Invalid Discord token. Check BOT_TOKEN.")
         except Exception as e:
             logger.critical(f"Bot crashed during startup: {e}", exc_info=e)
 
