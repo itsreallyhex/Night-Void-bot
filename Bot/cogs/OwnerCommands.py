@@ -3,6 +3,7 @@ import platform
 import psutil
 import os
 import asyncio
+from typing import Optional
 from discord.ext import commands, tasks
 from discord import app_commands
 from utilities import PermissionChecker, prefix_cooldown
@@ -105,6 +106,19 @@ class OwnerCommands(commands.Cog):
         else:
             await ctx.send(f"✅ تم إعادة تحميل {success} cogs بنجاح")
 
+    @commands.command()
+    @prefix_cooldown()
+    async def shutdown(self, ctx):
+        if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
+            await ctx.send("❌ هذا الأمر للبوت owner بس")
+            return
+        await ctx.send("البوت راح يطفي الآن.")
+        try:
+            await self.bot.close()
+        except Exception as e:
+            _logger.error(f"Shutdown failed: {e}", exc_info=e)
+            await ctx.send("❌ صار خطأ أثناء الإطفاء.")
+
     # All codes under this was made by the helpe of Claude Code.
     @commands.command()
     @prefix_cooldown()
@@ -203,6 +217,35 @@ class OwnerCommands(commands.Cog):
 
         _logger.info(f"dmall by {ctx.author.id}: sent={sent} failed={failed}")
         await status.edit(content=f"✅ تم الإرسال: **{sent}** | ❌ فشل: **{failed}**")
+        
+        # Usage: !say <الرسالة>  أو  !say #الروم <الرسالة>
+    @commands.command()
+    @prefix_cooldown()
+    async def say(self, ctx, channel: Optional[discord.TextChannel] = None, *, message: str = None):
+        if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
+            await ctx.send("❌ هذا الأمر للبوت owner بس")
+            return
+
+        if message is None:
+            await ctx.send("❌ الاستخدام: `!say [#الروم] <الرسالة>`")
+            return
+
+        target = channel or ctx.channel  # no channel given -> use the current one
+        try:
+            await target.send(message)
+        except discord.Forbidden:
+            await ctx.send(f"❌ ما عندي صلاحية أرسل في {target.mention}")
+            return
+
+        # Delete the invoking "!say ..." message so the bot looks like it spoke on its own.
+        try:
+            await ctx.message.delete()
+        except (discord.Forbidden, discord.NotFound):
+            pass  # no Manage Messages perm, or already gone -> just leave it
+
+        if target != ctx.channel:
+            await ctx.send(f"✅ تم الإرسال في {target.mention}")
+
 
 
 async def setup(bot):
