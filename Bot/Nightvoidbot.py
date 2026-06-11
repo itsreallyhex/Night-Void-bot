@@ -101,7 +101,7 @@ async def main():
         try:
             await bot.start(token)
         except discord.LoginFailure:
-            logger.critical("Invalid Discord token. Check NIGHTVOID_TOKEN.")
+            logger.critical("Invalid Discord token. Check BOT_TOKEN.")
         except Exception as e:
             logger.critical(f"Bot crashed during startup: {e}", exc_info=e)
 
