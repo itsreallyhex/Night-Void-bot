@@ -123,9 +123,9 @@ class MemberSlash(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="botsourcecode", description="يعطيك معلومات عن كود مصدر البوت")
+    @app_commands.command(name="sourcecode", description="يعطيك معلومات عن كود مصدر البوت")
     @slash_cooldown()
-    async def botsourcecode(self, interaction: discord.Interaction):
+    async def sourcecode(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="كود مصدر البوت",
             description=(
