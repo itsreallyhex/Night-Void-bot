@@ -6,7 +6,7 @@ from utilities import BotMentions, EphemeralReply, slash_cooldown
 from logger import setup_logger
 logger = setup_logger("NightVoid.MemberSlashCog")
 
-
+# THIS COG FOR NORMAL MEMBERS TO USE SLASH COMMANDS. NOT ADMIN OR OWNER COMMANDS.
 class MemberSlash(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -120,6 +120,21 @@ class MemberSlash(commands.Cog):
                 f"عدد الأعضاء: **{len(self.bot.users)}**"
             ),
             color=0x3498DB
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="botsourcecode", description="يعطيك معلومات عن كود مصدر البوت")
+    @slash_cooldown()
+    async def botsourcecode(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="كود مصدر البوت",
+            description=(
+                "يمكنك الوصول إلى كود مصدر البوت من خلال الرابط التالي:\n"
+                "[رابط الكود المصدر](https://github.com/itsreallyhex/Night-Void-Bot)\n"
+                "البوت مفتوح المصدر، يمكنك الاطلاع عليه والمساهمة فيه!\n"
+                "ملاحظة: يرجى احترام رخصة MIT عند استخدام أو تعديل الكود."
+            ),
+            color=0x9B59B6
         )
         await interaction.response.send_message(embed=embed)
 
