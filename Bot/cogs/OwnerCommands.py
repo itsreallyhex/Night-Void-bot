@@ -49,11 +49,14 @@ class OwnerCommands(commands.Cog):
         # Stop the loop when the cog is reloaded/unloaded so we don't stack timers.
         self._status_updater.cancel()
 
-    def _build_activity(self) -> discord.Activity:
+    def _build_activity(self) -> discord.BaseActivity:
         """Build the presence from the current status state + elapsed timer."""
-        atype = ACTIVITY_TYPES.get(self.status_type, discord.ActivityType.watching)
         elapsed = _format_elapsed(discord.utils.utcnow() - self.status_since)
-        return discord.Activity(type=atype, name=f"{self.status_text} • {elapsed}")
+        name = f"{self.status_text} • {elapsed}"
+        if self.status_type == "custom":  # verb-less, just the text
+            return discord.CustomActivity(name=name)
+        atype = ACTIVITY_TYPES.get(self.status_type, discord.ActivityType.watching)
+        return discord.Activity(type=atype, name=name)
 
     # Refreshes the presence once a minute so the "watching for X" timer ticks.
     # Discord rate-limits presence updates, so a 1-minute cadence is the safe choice.
@@ -124,7 +127,7 @@ class OwnerCommands(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    # Usage: !setstatus playing Valorant | !setstatus watching the server | !setstatus clear
+    # Usage: !setstatus playing Valorant | !setstatus custom 🌙 Night Void | !setstatus clear
     @commands.command()
     @prefix_cooldown()
     async def setstatus(self, ctx, activity_type: str = None, *, text: str = None):
@@ -138,8 +141,8 @@ class OwnerCommands(commands.Cog):
             await ctx.send("✅ تم مسح الحالة")
             return
 
-        if activity_type not in ACTIVITY_TYPES or text is None:
-            await ctx.send("❌ الاستخدام: `!setstatus <playing|watching|listening|competing> <نص>` أو `!setstatus clear`")
+        if (activity_type not in ACTIVITY_TYPES and activity_type != "custom") or text is None:
+            await ctx.send("❌ الاستخدام: `!setstatus <playing|watching|listening|competing|custom> <نص>` أو `!setstatus clear`")
             return
 
         # Update the shared state and reset the timer; the loop keeps it ticking after this.
