@@ -3,17 +3,63 @@ import platform
 import psutil
 import os
 import asyncio
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
 from utilities import PermissionChecker, prefix_cooldown
 from logger import setup_logger
 
 _logger = setup_logger("NightVoid.OwnerCommands")
 
+ACTIVITY_TYPES = {
+    "playing": discord.ActivityType.playing,
+    "watching": discord.ActivityType.watching,
+    "listening": discord.ActivityType.listening,
+    "competing": discord.ActivityType.competing,
+}
+
+
+def _format_elapsed(delta) -> str:
+    """Turn a timedelta into a short '2d 3h 15m' string for the status."""
+    total_minutes = int(delta.total_seconds() // 60)
+    days, rem = divmod(total_minutes, 1440)
+    hours, minutes = divmod(rem, 60)
+    parts = []
+    if days:
+        parts.append(f"{days}d")
+    if hours:
+        parts.append(f"{hours}h")
+    parts.append(f"{minutes}m")
+    return " ".join(parts)
+
+
+def _build_activity(bot) -> discord.Activity:
+    """Build the presence from the bot's live status state + elapsed timer."""
+    atype = ACTIVITY_TYPES.get(bot.status_type, discord.ActivityType.watching)
+    elapsed = _format_elapsed(discord.utils.utcnow() - bot.status_since)
+    return discord.Activity(type=atype, name=f"{bot.status_text} • {elapsed}")
+
+
 # THIS COMMAND/PREFIX ONLY FOR OWNER OF THE BOT. NOT SERVER OWNER.
 class OwnerCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self._status_updater.start()
+
+    def cog_unload(self):
+        # Stop the loop when the cog is reloaded/unloaded so we don't stack timers.
+        self._status_updater.cancel()
+
+    # Refreshes the presence once a minute so the "watching for X" timer ticks.
+    # Discord rate-limits presence updates, so a 1-minute cadence is the safe choice.
+    @tasks.loop(minutes=1)
+    async def _status_updater(self):
+        if not self.bot.status_text:  # None == status was cleared
+            return
+        await self.bot.change_presence(activity=_build_activity(self.bot))
+
+    @_status_updater.before_loop
+    async def _before_status_updater(self):
+        await self.bot.wait_until_ready()
 
     @commands.command()
     @prefix_cooldown()
@@ -81,23 +127,20 @@ class OwnerCommands(commands.Cog):
             return
 
         if activity_type == "clear":
+            self.bot.status_text = None  # tells the loop to stop managing presence
             await self.bot.change_presence(activity=None)
             await ctx.send("✅ تم مسح الحالة")
             return
 
-        types = {
-            "playing": discord.ActivityType.playing,
-            "watching": discord.ActivityType.watching,
-            "listening": discord.ActivityType.listening,
-            "competing": discord.ActivityType.competing,
-        }
-
-        if activity_type not in types or text is None:
+        if activity_type not in ACTIVITY_TYPES or text is None:
             await ctx.send("❌ الاستخدام: `!setstatus <playing|watching|listening|competing> <نص>` أو `!setstatus clear`")
             return
 
-        activity = discord.Activity(type=types[activity_type], name=text)
-        await self.bot.change_presence(activity=activity)
+        # Update the shared state and reset the timer; the loop keeps it ticking after this.
+        self.bot.status_type = activity_type
+        self.bot.status_text = text
+        self.bot.status_since = discord.utils.utcnow()
+        await self.bot.change_presence(activity=_build_activity(self.bot))
         _logger.info(f"Status changed to: {activity_type} {text}")
         await ctx.send(f"✅ تم تغيير الحالة إلى: **{activity_type} {text}**")
 
