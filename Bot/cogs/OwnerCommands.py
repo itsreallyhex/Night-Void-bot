@@ -21,8 +21,11 @@ class OwnerCommands(commands.Cog):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")
             return
-        synced = await self.bot.tree.sync()
-        await ctx.send(f"✅ تم مزامنة {len(synced)} أمر")
+        self.bot.tree.clear_commands(guild=None)
+        await self.bot.tree.sync()  
+        self.bot.tree.copy_global_to(guild=self.bot.main_guild)
+        synced = await self.bot.tree.sync(guild=self.bot.main_guild)
+        await ctx.send(f"✅ تم مزامنة {len(synced)} أمر (سيرفر)")
 
     @commands.command()
     @prefix_cooldown()

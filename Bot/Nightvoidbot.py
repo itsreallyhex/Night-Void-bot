@@ -71,6 +71,7 @@ class NightVoidBot(commands.Bot):
 
 bot = NightVoidBot(command_prefix="!", intents=intents)
 bot.start_time = discord.utils.utcnow()
+bot.main_guild = MY_GUILD
 
 @bot.event
 async def on_ready():
