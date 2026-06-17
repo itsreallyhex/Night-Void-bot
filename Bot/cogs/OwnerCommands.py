@@ -76,11 +76,14 @@ class OwnerCommands(commands.Cog):
         if not await PermissionChecker.is_bot_owner(self.bot, ctx.author):
             await ctx.send("❌ هذا الأمر للبوت owner بس")
             return
+        guild = self.bot.main_guild
+        # 1. Copy the (still-in-memory) global commands into the guild and register them.
+        self.bot.tree.copy_global_to(guild=guild)
+        synced = await self.bot.tree.sync(guild=guild)
+        # 2. NOW clear the global copies and push the empty list -> deletes the duplicates.
         self.bot.tree.clear_commands(guild=None)
-        await self.bot.tree.sync()  
-        self.bot.tree.copy_global_to(guild=self.bot.main_guild)
-        synced = await self.bot.tree.sync(guild=self.bot.main_guild)
-        await ctx.send(f"✅ تم مزامنة {len(synced)} أمر (سيرفر)")
+        await self.bot.tree.sync()
+        await ctx.send(f"✅ تم مزامنة {len(synced)} أمر (سيرفر) ومسح النسخ العامة")
 
     @commands.command()
     @prefix_cooldown()
