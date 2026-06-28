@@ -40,7 +40,7 @@ class NightVoidBot(commands.Bot):
             "cogs.memberprefix",
             "cogs.memberslash",
             "cogs.OwnerCommands",
-            "cogs.Honypot",
+            "cogs.honeypot",
         ]
         for ext in extensions:
             try:
