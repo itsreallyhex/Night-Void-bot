@@ -64,7 +64,7 @@ class Honeypot(commands.Cog):
         self.safe_role_ids = _parse_id_list(os.getenv("SAFE_ROLE_IDS"))
         self.whitelist_user_ids = _parse_id_list(os.getenv("WHITELIST_USER_IDS"))
         self.preserved_message_id = _parse_int(os.getenv("PRESERVED_MESSAGE_ID"))
-        self.timeout_minutes = _parse_int(os.getenv("TIMEOUT_DURATION_MINUTES"), 10)
+        self.timeout_minutes = _parse_int(os.getenv("TIMEOUT_DURATION_MINUTES"), 1440)
 
         # Lock guards the JSON read-modify-write so two near-simultaneous spam
         # messages can't clobber each other's count.
