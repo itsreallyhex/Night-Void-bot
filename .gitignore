@@ -43,3 +43,6 @@ desktop.ini
 # Logs
 *.log
 logs/
+
+# Honeypot persistent counter
+honeypot_stats.json
