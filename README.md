@@ -81,7 +81,7 @@ python Bot/Nightvoidbot.py
 | `GUILD_ID` | Your Discord server ID |
 | `PROTECTED_CHANNEL_ID` | Channel the honeypot guard monitors |
 | `LOG_CHANNEL_ID` | Channel where timeout events are logged |
-| `SAFE_ROLE_IDS` | Comma-separated exempt role IDs (any role at/above the lowest is exempt) |
+| `SAFE_ROLE_IDS` | Comma-separated exempt role IDs (only these exact roles are spared) |
 | `WHITELIST_USER_IDS` | Optional comma-separated user IDs that are always exempt |
 | `PRESERVED_MESSAGE_ID` | Pinned message in the protected channel that's never deleted |
 | `TIMEOUT_DURATION_MINUTES` | Timeout length in minutes (default 10) |

@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-from utilities import PermissionChecker, slash_cooldown
+from utilities import PermissionChecker, EphemeralReply, slash_cooldown
 from logger import setup_logger
 
 _logger = setup_logger("NightVoid.Honeypot")
@@ -97,23 +97,12 @@ class Honeypot(commands.Cog):
                 _logger.error("Failed to persist honeypot count: %s", e)
 
     # ----- Exemption -----
-    def _safe_role_threshold(self, guild: discord.Guild) -> int:
-        """Lowest hierarchy position among configured safe roles.
-
-        A member is "at or above" the safe line if any of their roles sits at
-        or above this position — that's how 'Moderator and above' is expressed.
-        Returns a very high number when no safe roles resolve, so nobody clears
-        the bar by hierarchy alone (explicit role/ID checks still apply).
-        """
-        positions = [
-            guild.get_role(rid).position
-            for rid in self.safe_role_ids
-            if guild.get_role(rid) is not None
-        ]
-        return min(positions) if positions else (1 << 30)
-
     def _is_exempt(self, member: discord.Member) -> bool:
         # Exemption is checked BEFORE any action — never touch a mod/bot.
+        # Exact-match only: a member is exempt if they are the bot, whitelisted,
+        # the guild owner, an administrator, or hold one of the EXACT roles listed
+        # in SAFE_ROLE_IDS. Role hierarchy/position is intentionally NOT used, so
+        # a verified/member role won't accidentally exempt regular members.
         if member.bot:
             return True
         if member.id == self.bot.user.id:
@@ -123,10 +112,6 @@ class Honeypot(commands.Cog):
         if PermissionChecker.is_guild_owner(member) or PermissionChecker.is_admin(member):
             return True
         if self.safe_role_ids & {r.id for r in member.roles}:
-            return True
-        # Hierarchy check: any role at or above the lowest safe role.
-        threshold = self._safe_role_threshold(member.guild)
-        if any(r.position >= threshold for r in member.roles):
             return True
         return False
 
@@ -160,7 +145,6 @@ class Honeypot(commands.Cog):
     # ----- Main guard -----
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        _logger.info("on_message fired: channel=%s author=%s", message.channel.id, getattr(message.author, 'id', None))
         # Only act inside the configured protected channel.
         if not self.protected_channel_id or message.channel.id != self.protected_channel_id:
             return
@@ -217,9 +201,12 @@ class Honeypot(commands.Cog):
         _logger.info("Timed out %s (%s) | total=%d", member, member.id, self.timeout_count)
 
     # ----- Stats command -----
-    @app_commands.command(name="stats", description="يعطيك عدد التايم اوت اللي طلعتها غرفة الحماية")
+    @app_commands.command(name="stats", description="يعطيك عدد التايم اوت اللي طلعتها غرفة الحماية (ادمن فقط)")
     @slash_cooldown()
     async def stats(self, interaction: discord.Interaction):
+        if not PermissionChecker.is_admin(interaction.user):
+            await EphemeralReply.send(interaction, "❌ ما عندك صلاحية!")
+            return
         await interaction.response.send_message(
             f"🔒 إجمالي التايم اوت: {self.timeout_count}"
         )
