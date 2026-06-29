@@ -160,6 +160,7 @@ class Honeypot(commands.Cog):
     # ----- Main guard -----
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+        _logger.info("on_message fired: channel=%s author=%s", message.channel.id, getattr(message.author, 'id', None))
         # Only act inside the configured protected channel.
         if not self.protected_channel_id or message.channel.id != self.protected_channel_id:
             return
