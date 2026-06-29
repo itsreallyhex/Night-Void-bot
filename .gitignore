@@ -5,6 +5,7 @@
 *.env
 secrets/
 config/secrets.*
+discorddata.txt
 
 # Sensitive token/key files
 *token*.txt
@@ -43,3 +44,6 @@ desktop.ini
 # Logs
 *.log
 logs/
+
+# Honeypot persistent counter
+honeypot_stats.json
